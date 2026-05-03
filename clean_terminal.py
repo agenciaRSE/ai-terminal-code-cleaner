@@ -41,6 +41,7 @@ def clean_text(text):
         "trailing_ws": 0,
         "fences": 0,
         "prompts": 0,
+        "leading_ws": 0,
         "final_chars": 0,
     }
 
@@ -91,20 +92,24 @@ def clean_text(text):
         if FENCE_RE.match(line):
             stats["fences"] += 1
             continue
+        lstripped = line.lstrip(" \t")
+        if lstripped != line:
+            stats["leading_ws"] += len(line) - len(lstripped)
+        line = lstripped
         for pat in PROMPT_PATTERNS:
             new_line = pat.sub("", line, count=1)
             if new_line != line:
                 stats["prompts"] += 1
                 line = new_line
                 break
-        stripped = line.rstrip(" \t")
-        if stripped != line:
+        rstripped = line.rstrip(" \t")
+        if rstripped != line:
             stats["trailing_ws"] += 1
-        cleaned_lines.append(stripped)
+        cleaned_lines.append(rstripped)
 
-    while cleaned_lines and cleaned_lines[0] == "":
+    while cleaned_lines and cleaned_lines[0].strip() == "":
         cleaned_lines.pop(0)
-    while cleaned_lines and cleaned_lines[-1] == "":
+    while cleaned_lines and cleaned_lines[-1].strip() == "":
         cleaned_lines.pop()
 
     text = "\n".join(cleaned_lines)
@@ -124,6 +129,7 @@ def format_status(stats):
         ("trailing_ws", "líneas con espacios al final"),
         ("fences", "bloques ```"),
         ("prompts", "prompts"),
+        ("leading_ws", "espacios al inicio"),
     ]
     extras = [f"{stats[k]} {label}" for k, label in labels if stats.get(k)]
     if extras:
