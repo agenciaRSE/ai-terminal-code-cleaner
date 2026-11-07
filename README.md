@@ -1,47 +1,96 @@
-# AI Terminal Code Cleaner
+<div align="center">
 
-Utilidad local de escritorio (Python + Tkinter) que limpia los artefactos que las IAs introducen en los snippets de código (comillas tipográficas, em-dash, zero-width, BOM, fences de markdown, prefijos de prompt, CRLF, espacios al final de línea), para que se peguen en la terminal sin errores.
+# 🧹 AI Terminal Code Cleaner
 
-## Garantías
+**Pega en la terminal lo que te da la IA… sin que explote.**
+Una pequeña app de escritorio que limpia los snippets de ChatGPT, Claude o Gemini (comillas tipográficas, rayas largas, caracteres invisibles, fences de Markdown, prompts `$ `) antes de pegarlos.
 
-- **Sin red**: no usa `socket`, `urllib`, `requests`, `subprocess`, `os.system`, `eval`, `exec`.
-- **Sin disco**: no escribe ni lee archivos. No hay logs, caché, ni configuración persistida.
-- **Sin telemetría**.
-- **Sin dependencias externas**: solo librería estándar (`tkinter`, `re`).
-- El portapapeles del SO se usa solo cuando pulsas Pegar/Copiar.
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](clean_terminal.py)
+[![Sin dependencias](https://img.shields.io/badge/dependencias-0-22c55e?style=for-the-badge)](#-garantías)
+[![Sin red](https://img.shields.io/badge/red-ninguna-0a0a0a?style=for-the-badge)](#-garantías)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-a855f7?style=for-the-badge)](LICENSE)
 
-## Cómo usar
+[English](#-in-english) · [Contribuir](#-contribuir)
 
-Doble clic en `Lanzar.bat` (Windows) o ejecuta:
+</div>
 
+---
+
+## 😤 El problema
+
+Copias un comando de la IA, lo pegas y la terminal responde con un error absurdo. El culpable no se ve: una comilla `“` en vez de `"`, una raya `—` donde iba `--`, un espacio de ancho cero o la línea <code>```bash</code> que se coló al copiar.
+
+## ✅ Antes y después
+
+````text
+ANTES (copiado del chat)
+```bash
+$ npm install —save-dev vite
+$ git commit -m “fix”
 ```
+
+DESPUÉS (listo para la terminal)
+npm install --save-dev vite
+git commit -m "fix"
+````
+
+## ⚡ Cómo se usa
+
+Doble clic en **`Lanzar.bat`** (Windows) o:
+
+```bash
 python clean_terminal.py
 ```
 
-Atajos:
+| Atajo | Qué hace |
+|---|---|
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> | Pega del portapapeles, limpia y vuelve a copiar el resultado, todo en un paso |
+| <kbd>Ctrl</kbd>+<kbd>L</kbd> | Limpia lo que ya está en el área de entrada |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> | Copia el resultado limpio |
 
-- `Ctrl+Shift+V` — pegar desde el portapapeles, limpiar y volver a copiar el resultado en un solo paso.
-- `Ctrl+L` — limpiar lo que ya esté en el área de entrada.
-- `Ctrl+Shift+C` — copiar el resultado limpio al portapapeles.
+## 🧽 Qué limpia (siempre de forma conservadora)
 
-## Reglas de limpieza (todas conservadoras)
+| Artefacto | Se convierte en |
+|---|---|
+| Caracteres invisibles (zero-width, BOM, separador mongol) | se eliminan |
+| Espacio duro `nbsp` | espacio normal |
+| Comillas tipográficas `“ ” „ ‟` / `‘ ’ ‚ ‛` | `"` / `'` |
+| Raya `—` / semirraya `–` / `…` | `--` (recupera flags como `--save-dev`) / `-` / `...` |
+| Saltos `\r\n` y `\r` | `\n` |
+| Espacios y tabs al final de línea | se eliminan |
+| Líneas <code>```</code> o <code>```lang</code> | se eliminan |
+| Prompts al inicio de línea (`$ `, `> `, `PS …> `, `C:\…>`) | se eliminan |
+| Líneas en blanco al principio y al final | se recortan (las de dentro se conservan) |
 
-- Caracteres invisibles (zero-width, BOM, mongolian vowel separator) → eliminados.
-- `nbsp` → espacio normal.
-- Comillas tipográficas `“ ” „ ‟` → `"`, `‘ ’ ‚ ‛` → `'`.
-- Em-dash `—` → `--` (recupera flags como `--save-dev`), en-dash `–` → `-`, `…` → `...`.
-- `\r\n` y `\r` sueltos → `\n`.
-- Espacios y tabs al final de cada línea → eliminados.
-- Líneas que son solo <code>```</code> o <code>```lang</code> → eliminadas.
-- Prefijos de prompt al inicio de línea (`$ `, `> `, `PS …> `, `C:\…>`) → eliminados.
-- Líneas en blanco al inicio y al final del bloque → recortadas (las internas se conservan).
+**Lo que no toca:** no junta espacios múltiples, no cambia tabs, no une líneas con `\`, no lo convierte en una sola línea y no altera nada entre comillas.
 
-**No se hace** colapsar espacios múltiples, tocar tabs, unir líneas con `\`, convertir a one-liner, ni alterar contenido entre comillas.
+## 🔒 Garantías
 
-## Requisitos
+- **Sin red:** no usa `socket`, `urllib`, `requests`, `subprocess`, `os.system`, `eval` ni `exec`.
+- **Sin disco:** no lee ni escribe archivos. Sin logs, sin caché, sin configuración guardada.
+- **Sin telemetría** y **sin dependencias**: solo la librería estándar (`tkinter`, `re`).
+- El portapapeles solo se usa cuando pulsas pegar o copiar.
 
-- Python 3.8+ con Tkinter (incluido en la instalación estándar de Python en Windows).
+Es un solo archivo de Python: puedes leerlo entero antes de ejecutarlo.
 
-## Licencia
+## 📋 Requisitos
 
-MIT — ver [LICENSE](LICENSE).
+Python 3.8 o superior con Tkinter (viene incluido en la instalación estándar de Python para Windows; en Linux puede hacer falta el paquete `python3-tk`).
+
+## 🤝 Contribuir
+
+¿Te has encontrado otro carácter raro que rompe la terminal? **Esa es la mejor contribución posible.**
+
+- 🧪 **Nuevos artefactos:** abre un issue con el texto que falló (sin datos sensibles) y qué esperabas.
+- 🐧 **macOS y Linux:** prueba los atajos y el lanzador en tu sistema y cuéntanos cómo va.
+- 🛡️ **Regla de oro:** cada limpieza nueva debe ser conservadora. Si una regla puede cambiar el significado de un comando, no entra.
+
+Pull requests bienvenidos. Mantén las garantías: nada de red, nada de disco, nada de dependencias.
+
+## 🇬🇧 In English
+
+A tiny desktop app (Python + Tkinter, standard library only) that cleans AI-generated code snippets so they paste cleanly into a terminal: smart quotes, em dashes (`—` → `--`), invisible characters, non-breaking spaces, Markdown fences, `$ ` / `PS>` prompts, CRLF and trailing spaces. No network, no disk I/O, no telemetry. Run `python clean_terminal.py` and press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>. Issues and pull requests are welcome.
+
+## 📄 Licencia
+
+[MIT](LICENSE) © Diego Meijide · Hecho por [AGENCIA RSE](https://agenciarse.com/estudio/), estudio de A Coruña.
