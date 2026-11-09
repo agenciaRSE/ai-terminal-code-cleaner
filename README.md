@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **Proyecto archivado.** Lo sustituye [Auto Clipboard](https://github.com/agenciaRSE/auto-clipboard), una skill para Claude Code y Claude Desktop que copia en el portapapeles el texto exacto que Claude te da para pegar, así que ya no hace falta limpiarlo después.
+>
+> **Archived.** Replaced by [Auto Clipboard](https://github.com/agenciaRSE/auto-clipboard), a Claude Code and Claude Desktop skill that copies the exact text Claude gives you to paste, so there is nothing left to clean.
+
 <div align="center">
 
 # 🧹 AI Terminal Code Cleaner
